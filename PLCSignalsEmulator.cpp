@@ -142,7 +142,6 @@ int main(int argc, char **argv)
 	msgToSend.plcSgnls[TEMPER_LEVEL] = 15 + random.result(30);
 	msgToSend.plcSgnls[BIT_VALUES] = msgToSend.plcSgnls[BIT_VALUES] | 0x10;
 	msgToSend.plcSgnls[BIT_VALUES] = msgToSend.plcSgnls[BIT_VALUES] | 0x20;
-	msgToRecv.plcSBitValues = 0;
 	unsigned short oldBitValues, bitArray;
 	int cycleCounter = 75;
 	working = true;
@@ -155,7 +154,6 @@ int main(int argc, char **argv)
 	// Рабочий цикл
 	while(working)
 	{	
-		if(fireDanger) goto FireAlarm;
 		// Эмуляция изменения температуры
 		bitArray = msgToSend.plcSgnls[BIT_VALUES];
 		bitArray = bitArray << 9;
@@ -167,6 +165,7 @@ int main(int argc, char **argv)
 		bitArray = bitArray >> 15;
 		msgToSend.plcSgnls[WATER_LEVEL] = bitArray == 1 ? msgToSend.plcSgnls[WATER_LEVEL] : random.result(100) > 50 ? ++msgToSend.plcSgnls[WATER_LEVEL] : msgToSend.plcSgnls[WATER_LEVEL];
 
+		if(fireDanger) goto FireAlarm;
 		// Эмуляция срабатывания датчиков дыма
 		msgToSend.plcSgnls[BIT_VALUES] = random.result(1000) > 998 ? msgToSend.plcSgnls[BIT_VALUES] | 0x1 : msgToSend.plcSgnls[BIT_VALUES];
 		msgToSend.plcSgnls[BIT_VALUES] = random.result(1000) > 998 ? msgToSend.plcSgnls[BIT_VALUES] | 0x2 : msgToSend.plcSgnls[BIT_VALUES];
